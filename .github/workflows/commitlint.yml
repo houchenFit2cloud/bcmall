@@ -13,18 +13,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '14'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run commitlint
-        run: npx commitlint --from HEAD~1 --to HEAD
+      - name: Validate Commit Message
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          if ! echo "$COMMIT_MSG" | grep -qE "^(feat|fix|docs|style|refactor|test|chore): #\d+"; then
+            echo "Invalid commit message format! (feat|fix|docs|style|refactor|test|chore): #xxxxx"
+            exit 1
+          fi
